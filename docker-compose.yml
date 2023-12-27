@@ -1,0 +1,16 @@
+version: '3'
+services:
+    vessel-backend:
+        hostname: vessel-backend
+        domainname: vessel-backend.kg
+        build:
+            context: .
+            dockerfile: .cicd/Dockerfile-backend
+        restart: unless-stopped
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
+          - vessel_backend_storage:/app/storage/files/
+        ports:
+            - 16410:3000
+volumes:
+  vessel_backend_storage:

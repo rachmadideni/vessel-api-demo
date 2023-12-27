@@ -1,0 +1,53 @@
+stages:
+- deploy
+- production
+
+deploy-to-dev:
+  stage: deploy
+  script:
+#    - sed -i "s,VALUE_SITE_URL,$SITE_URL_DEV,g" env
+    - sed -i "s/VALUE_DB_HOST/$DB_HOST_DEV/g" env
+    - sed -i "s/VALUE_DB_NAME/$DB_NAME_DEV/g" env
+    - sed -i "s/VALUE_DB_PASSWD/$DB_PASSWD_DEV/g" env
+    - sed -i "s/VALUE_DB_USERNAME/$DB_USERNAME_DEV/g" env
+    - sed -i "s/VALUE_DB_PORT/$DB_PORT_DEV/g" env
+    - sed -i "s,VALUE_AZURE_AD_REDIRECT_URI,$AZURE_AD_REDIRECT_URI_DEV,g" env
+    - sed -i "s/VALUE_AZURE_AD_APP_ID/$AZURE_AD_APP_ID/g" env
+    - sed -i "s/VALUE_AZURE_AD_TENANT/$AZURE_AD_TENANT/g" env
+    - sed -i "s/VALUE_AZURE_AD_APP_SECRET/$AZURE_AD_APP_SECRET/g" env
+    - sed -i "s/VALUE_AZURE_AD_RESOURCE/$AZURE_AD_RESOURCE/g" env
+    - sed -i "s/VALUE_NODE_ENV/$NODE_ENV_DEV/g" env
+#build ct
+    - sudo docker-compose -f docker-compose.yml build
+    - sudo docker-compose down --rmi all  >/dev/null 2>&1 || NO_CONTAINER=1 
+    - sudo docker-compose -f docker-compose.yml up -d 
+  only:
+    - develop
+  tags:
+    - vm129
+
+
+deploy-to-prod:
+  stage: production
+  script:
+    # - sed -i "s,VALUE_SITE_URL,$SITE_URL,g" env
+    - sed -i "s/VALUE_DB_HOST/$DB_HOST/g" env
+    - sed -i "s/VALUE_DB_NAME/$DB_NAME/g" env
+    - sed -i "s/VALUE_DB_PASSWD/$DB_PASSWD/g" env
+    - sed -i "s/VALUE_DB_USERNAME/$DB_USERNAME/g" env
+    - sed -i "s/VALUE_DB_PORT/$DB_PORT/g" env
+    - sed -i "s,VALUE_AZURE_AD_REDIRECT_URI,$AZURE_AD_REDIRECT_URI,g" env
+    - sed -i "s/VALUE_AZURE_AD_APP_ID/$AZURE_AD_APP_ID/g" env
+    - sed -i "s/VALUE_AZURE_AD_TENANT/$AZURE_AD_TENANT/g" env
+    - sed -i "s/VALUE_AZURE_AD_APP_SECRET/$AZURE_AD_APP_SECRET/g" env
+    - sed -i "s/VALUE_AZURE_AD_RESOURCE/$AZURE_AD_RESOURCE/g" env
+    - sed -i "s/VALUE_NODE_ENV/$NODE_ENV/g" env
+#build ct
+    - sudo docker compose -f docker-compose.yml build
+    - sudo docker compose down --rmi all  >/dev/null 2>&1 || NO_CONTAINER=1 
+    - sudo docker compose -f docker-compose.yml up -d 
+
+  only:
+    - main
+  tags:
+    - vm3164

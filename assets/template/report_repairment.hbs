@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang='en' xmlns:script='http://www.w3.org/1999/html'>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Repairment Report</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		body { font-family:'Poppins', sans-serif; font-size: 0.975rem}
+		.poppins-bold { font-family: 'Poppins-bold', sans-serif; font-weight: bold; font-size: 0.975rem}
+	</style>
+</head>
+<body>
+<center style='margin: 50px'>
+	<table class='table table-bordered'>
+		<tbody>
+		<tr>
+			<td rowspan='6' style='width: 13.75rem;'><img src="{{imageSrc}}" alt='logo' style='width: 12.5rem; margin-top: 50%'></td>
+		</tr>
+		<tr>
+			<td class='poppins-bold text-center '>PT.BUMI LINTAS TAMA</td>
+			<td class='poppins-bold'>NO.DOK</td>
+			<td class='poppins-bold'>{{ repairment.documentNumber }}</td>
+		</tr>
+		<tr>
+			<td class='poppins-bold text-center align-middle' rowspan="2" style="align:middle;">
+				FORMULIR SISTEM MANAJEMEN KESELAMATAN
+			</td>
+			<td class='poppins-bold'>REVISI</td>
+			<td class='poppins-bold'>{{ repairment.revision }}</td>
+		</tr>
+		<tr>
+			<td class='poppins-bold'>TGL EFEKTIF</td>
+			<td class='poppins-bold'>{{ moment repairment.effectiveDate "DD-MMM-YYYY" }}</td>
+		</tr>
+		<tr>
+			<td class='poppins-bold text-center' colspan="3">
+				LAPORAN PERBAIKAN / PENYELESAIAN PEKERJAAN DI KAPAL
+			</td>
+		</tr>
+		<tr>
+			<td class='poppins-bold text-center' colspan='3'>
+			Antar Muka Prosedur: BLT-1.10.0-01 Pemeliharaan Kapal dan Perlengkapannya
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	{{!-- Gambar Kerusakan --}}
+	<div style="display:flex;flex-direction:row;">
+		<p style="text-transform:capitalize">
+			Gambar Penyelesaian Pekerjaan ME :
+		</p>
+	</div>
+	<div style="display:flex;flex-direction:row;flex-wrap:wrap;row-gap:1rem;column-gap:1rem;">		
+		{{#each photos}}
+		<div
+			style="display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;border:solid 0px #cacaca;">
+			<img src="{{this.url}}" style="width:230px;height:130px;" />
+			{{!-- <p>{{ this.name }}</p> --}}
+		</div>
+		{{/each}}
+	</div>
+	{{!-- End Gambar Kerusakan --}}
+
+	<table class="table table-bordered" style="margin-top:1.5rem;border-collapse:separate;border-spacing:0;">
+		<thead>
+			<tr>
+				<th colspan="5" class="background-color:#00803C;color:black;">
+					Vessel Name 
+					{{
+						repairment.ship.name
+					}}
+				</th>
+			</tr>			
+		</thead>
+		<tbody>
+			<tr>
+				<td colspan="2" style="border-right:none!important;">Form number</td>
+				<td style="border-left:none!important;">: {{ repairment.formNumber }}</td>
+				<td style="width:12rem;border-right:none!important;">Tanggal Penyelesaian</td>
+				<td style="width:14rem;border-left:none!important;">: {{ moment damageReport.completionDate "YYYY-MM-DD" }}</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="border-right:none!important;">Departemen</td>
+				<td style="border-left:none!important;text-transform:uppercase;">: {{ repairment.section.name }}</td>
+				{{!-- <td>Tanggal Kejadian</td>
+				<td>{{ moment damageReport.eventDate "YYYY-MM-DD" }}</td> --}}
+			</tr>			
+		</tbody>
+	</table>
+
+	{{!-- dasar pelaksanaan / permintaan  --}}
+	<table class="table table-bordered" style="width:100%;border:solid 1px gray;border-collapse:separate;border-spacing:0;
+    border-color: gray;">
+		<thead>
+			<tr>
+				<th colspan="2">Dasar pelaksanaan/Permintaan</th>
+				<th style="text-align:center;">Tanggal</th>
+				<th style="text-align:center;">Nomor</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each reasons}}
+			<tr>
+				<td style="width:1rem;">
+					{{#if this.active }}
+					<input type='checkbox' checked />
+					{{else}}
+					<input type='checkbox' />
+					{{/if}}
+				</td>
+				<td>{{ this.commonRepairmentReason.name }}</td>
+				{{#if this.reasonDate }}
+					<td style="width:12rem;text-align: center;">{{ moment this.reasonDate "YYYY-MM-DD" }}</td>
+				{{else}}
+					<td style="width:12rem;text-align: center;"></td>				
+				{{/if}}
+				<td style="width:12rem;text-align: center;">{{ this.reasonNumber }}</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+
+	{{!--Jenis pekerjaan  --}}
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th colspan="2">Jenis Pekerjaan/Uraian</th>				
+			</tr>
+		</thead>
+		<tbody>
+			{{#each jobs}}
+				<tr>
+					<td>{{ this.name }}</td>
+				</tr>
+				{{#each this.details}}
+				<tr>
+					<td>{{#increment @index}}{{/increment}}. {{ this.name }}</td>
+				</tr>
+				{{/each}}
+			{{/each}}
+		</tbody>
+	</table>
+
+	{{!-- material/ukuran --}}
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Material/Ukuran</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each materials}}
+			<tr>
+				{{!-- <td>{{ repairment.materialDesc }}</td> --}}
+				<td>{{ this.name }}</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+
+	<center>
+		<table class='table' style='width:100%;'>
+			<tr>
+				<td style='width: 25rem; text-align: left; border-width: 0; border-style: none; border-color: white'
+					colspan='4'>Tanggal Laporan: {{moment d "YYYY-MM-DD"}}</td>
+			</tr>
+		</table>
+		<table class='table table-bordered' style='width:100%;'>
+			<tr>
+			{{#each approvals}}
+				<td style='width: 25rem; text-align: center; text-transform: uppercase'>{{ this.desc }}</td>				
+			{{/each}}
+			</tr>
+			<tr>
+				{{#each approvals}}
+				<td style='height: 7rem'></td>
+				{{/each}}
+			</tr>
+			<tr>
+				{{#each approvals}}
+					<td class='poppins-bold text-center'>
+						<div style="height:4.8rem;display:flex;flex-direction:column;justify-content:space-between;align-items:center">
+							{{!-- {{#with user}} --}}
+								<p style="text-transform:uppercase;">{{ this.name }}</p>								
+								<p style="text-transform:uppercase;">{{ this.role }}</p>								
+							{{!-- {{/with}} --}}
+						</div>
+					</td>				
+				{{/each}}
+			</tr>
+		</table>
+	</center>
+
+</div>
+</body>
+</html>
